@@ -11,6 +11,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "LinkedList.h"
+#include "Shape.h"
 
  /******************************************************************************
   * Animation & Timing Setup
@@ -62,6 +64,10 @@ void think(void);
  * Animation-Specific Setup (Add your own definitions, constants, and globals here)
  ******************************************************************************/
 
+// LINKED RENDERLIST
+LinkedList* rlistbg; // backgrounds
+LinkedList* rlistfg; // foregrounds
+
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
   ******************************************************************************/
@@ -70,8 +76,8 @@ void main(int argc, char** argv)
 {
 	// Initialize the OpenGL window.
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(1000, 800);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowSize(800, 800);
 	glutCreateWindow("Animation");
 
 	// Set up the scene.
@@ -106,15 +112,22 @@ void main(int argc, char** argv)
  */
 void display(void)
 {
-	/*
-		TEMPLATE: REPLACE THIS COMMENT WITH YOUR DRAWING CODE
+	glClear(GL_COLOR_BUFFER_BIT);
 
-		Separate reusable pieces of drawing code into functions, which you can add
-		to the "Animation-Specific Functions" section below.
+	// backgroundloop first
+	for (Node* current = rlistbg->head; current != NULL; current = current->next)
+	{
+		// figure out what shape we're rendering
+		switch (current->shape_ptr->type)
+		{
+		case SHAPE_SQUARE:
+			render_square(current->shape_ptr);
+			break;
+		}
+	}
 
-		Remember to add prototypes for any new functions to the "Animation-Specific
-		Function Prototypes" section near the top of this template.
-	*/
+
+	glutSwapBuffers();
 }
 
 /*
@@ -180,6 +193,16 @@ void idle(void)
  */
 void init(void)
 {
+	rlistbg = new_ll();
+	rlistfg = new_ll();
+
+	// add a square to the background
+	Shape* bgsquare = new_shape("bgsquare", 4, 0, 0, 1.1f, 0,
+		1.0f, 1.0f, 1.0f, 1.0f, // colour 1
+		1.0f, 1.0f, 1.0f, 1.0f, // colour 2
+		SHAPE_SQUARE);
+
+	insert_back(rlistbg, bgsquare);
 }
 
 /*
@@ -192,45 +215,9 @@ void init(void)
 */
 void think(void)
 {
-	/*
-		TEMPLATE: REPLACE THIS COMMENT WITH YOUR ANIMATION/SIMULATION CODE
+	Shape* animateme = find(rlistbg, "bgsquare");
 
-		In this function, we update all the variables that control the animated
-		parts of our simulated world. For example: if you have a moving box, this is
-		where you update its coordinates to make it move. If you have something that
-		spins around, here's where you update its angle.
-
-		NOTHING CAN BE DRAWN IN HERE: you can only update the variables that control
-		how everything will be drawn later in display().
-
-		How much do we move or rotate things? Because we use a fixed frame rate, we
-		assume there's always FRAME_TIME milliseconds between drawing each frame. So,
-		every time think() is called, we need to work out how far things should have
-		moved, rotated, or otherwise changed in that period of time.
-
-		Movement example:
-		* Let's assume a distance of 1.0 GL units is 1 metre.
-		* Let's assume we want something to move 2 metres per second on the x axis
-		* Each frame, we'd need to update its position like this:
-			x += 2 * (FRAME_TIME / 1000.0f)
-		* Note that we have to convert FRAME_TIME to seconds. We can skip this by
-		  using a constant defined earlier in this template:
-			x += 2 * FRAME_TIME_SEC;
-
-		Rotation example:
-		* Let's assume we want something to do one complete 360-degree rotation every
-		  second (i.e. 60 Revolutions Per Minute, or RPM).
-		* Each frame, we'd need to update our object's angle like this (we'll use the
-		  FRAME_TIME_SEC constant as per the example above):
-			a += 360 * FRAME_TIME_SEC;
-
-		This works for any type of "per second" change: just multiply the amount you'd
-		want to move in a full second by FRAME_TIME_SEC, and add or subtract that
-		from whatever variable you're updating.
-
-		You can use this same approach to animate other things like color, opacity,
-		brightness of lights, etc.
-	*/
+	animateme->rotation += 1 * FRAME_TIME_SEC;
 }
 
 /******************************************************************************/

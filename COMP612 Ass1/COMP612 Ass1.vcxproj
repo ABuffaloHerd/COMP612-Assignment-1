@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="LinkedList.c" />
+    <ClCompile Include="Shape.c" />
     <ClCompile Include="Source.c" />
   </ItemGroup>
   <ItemGroup>
