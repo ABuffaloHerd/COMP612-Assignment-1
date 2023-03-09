@@ -24,12 +24,18 @@
     <ClCompile Include="Shape.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RenderFunctions.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,6 +13,7 @@
 
 #include "LinkedList.h"
 #include "Shape.h"
+#include "RenderFunctions.h"
 
  /******************************************************************************
   * Animation & Timing Setup
@@ -59,6 +60,7 @@ void idle(void);
 void main(int argc, char** argv);
 void init(void);
 void think(void);
+inline float rtoi(int rgb);
 
 /******************************************************************************
  * Animation-Specific Setup (Add your own definitions, constants, and globals here)
@@ -67,6 +69,11 @@ void think(void);
 // LINKED RENDERLIST
 LinkedList* rlistbg; // backgrounds
 LinkedList* rlistfg; // foregrounds
+
+inline float rtoi(int rgb)
+{
+	return (float)rgb / 255.0;
+}
 
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
@@ -123,6 +130,12 @@ void display(void)
 		case SHAPE_SQUARE:
 			render_square(current->shape_ptr);
 			break;
+		case SHAPE_TRIANGLE:
+			render_triangle(current->shape_ptr);
+			break;
+		case SHAPE_CUSTOM:
+			current->shape_ptr->custom(current->shape_ptr);
+			break;
 		}
 	}
 
@@ -142,7 +155,8 @@ void reshape(int width, int h)
 */
 void keyPressed(unsigned char key, int x, int y)
 {
-	switch (tolower(key)) {
+	switch (tolower(key)) 
+	{
 		/*
 			TEMPLATE: Add any new character key controls here.
 
@@ -193,16 +207,26 @@ void idle(void)
  */
 void init(void)
 {
+	// bl e n d i n g
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// initialize the renderlists
 	rlistbg = new_ll();
 	rlistfg = new_ll();
 
-	// add a square to the background
-	Shape* bgsquare = new_shape("bgsquare", 4, 0, 0, 1.1f, 0,
-		1.0f, 1.0f, 1.0f, 1.0f, // colour 1
-		1.0f, 1.0f, 1.0f, 1.0f, // colour 2
-		SHAPE_SQUARE);
 
-	insert_back(rlistbg, bgsquare);
+	// initialize a single square the size of the screen with a custom function
+	Shape* sky = new_custom_shape("sky", render_sky);
+	insert_back(rlistbg, sky);
+
+	// render some mountains for cool stone effect.
+	// Transparent background mountains first
+	Shape* mountains = new_shape("bgmountains", 3, -0.3f, -0.3f, 0.9f, 0,
+		rtoi(145), rtoi(223), rtoi(255), 1.0f,
+		rtoi(112), rtoi(112), rtoi(112), 1.0f,
+		SHAPE_TRIANGLE);
+	insert_back(rlistbg, mountains);
 }
 
 /*
@@ -215,9 +239,8 @@ void init(void)
 */
 void think(void)
 {
-	Shape* animateme = find(rlistbg, "bgsquare");
-
-	animateme->rotation += 1 * FRAME_TIME_SEC;
+	Shape* s = find(rlistbg, "bgmountains");
+	s->scale += 0.4f * FRAME_TIME_SEC;
 }
 
 /******************************************************************************/

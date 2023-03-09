@@ -48,6 +48,21 @@ Shape* new_shape(char* tag, unsigned int corners,
 	return shape;
 }
 
+
+Shape* new_custom_shape(char* tag, void(*custom)(struct _shape* self))
+{
+	// initialize with default values
+		Shape* shape = new_shape(tag, 4, 0, 0, 1.0f, 0,
+		1.0f, 1.0f, 1.0f, 1.0f, // colour 1
+		1.0f, 1.0f, 1.0f, 1.0f, // colour 2
+		SHAPE_CUSTOM); // custom shape, so the custom function is in play here
+
+		shape->custom = custom;
+
+		return shape;
+}
+
+// GENERIC RENDER FUNCTIONS
 void render_square(Shape* s)
 {
 	// calculate radius of this polygon.
@@ -58,7 +73,6 @@ void render_square(Shape* s)
 	glColor4fv(s->colour[0]);
 	glBegin(GL_QUADS);
 
-	printf("Colour: %f %f %f\n", s->colour[0][0], s->colour[0][1], s->colour[0][2], s->colour[0][3]);
 
 	// position
 	const float px = s->pos[0];
@@ -79,5 +93,30 @@ void render_square(Shape* s)
 		t += 90;
 	}
 
+	glEnd();
+}
+
+void render_triangle(Shape* s)
+{
+	// starting at the center
+	// x = r cos t
+	// y = r sin t
+	float t = s->rotation + 90;
+	float x = s->scale * cos(rad(t));
+	float y = s->scale * sin(rad(t));
+
+	glBegin(GL_TRIANGLES);
+	glColor4fv(s->colour[0]);
+	glVertex2f(x + s->pos[0], y + s->pos[1]);
+
+	glColor4fv(s->colour[1]);
+	t += 120;
+	x = s->scale * cos(rad(t));
+	y = s->scale * sin(rad(t));
+	glVertex2f(x + s->pos[0], y + s->pos[1]);
+	t += 120;
+	x = s->scale * cos(rad(t));
+	y = s->scale * sin(rad(t));
+	glVertex2f(x + s->pos[0], y + s->pos[1]);
 	glEnd();
 }

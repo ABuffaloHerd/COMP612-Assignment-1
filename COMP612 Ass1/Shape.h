@@ -25,7 +25,7 @@ typedef struct _shape
 
 	ShapeType type;
 
-	void(*custom)(struct _shape* self, int len, ...); // custom function for when none of the premade shapes are useful
+	void(*custom)(struct _shape* self); // custom function for when none of the premade shapes are useful
 } Shape;
 
 // Shape Constr- I mean factory.
@@ -35,13 +35,15 @@ Shape* new_shape(char* tag, unsigned int corners,
 	float c2r, float c2g, float c2b, float c2a,
 	ShapeType type);
 
+Shape* new_custom_shape(const char* tag, void(*custom)(struct _shape* self));
+
 // Draw square
 void render_square(Shape* s);
 
 // draw a perfect circle
 
 // DRAW PYRAMID
-
+void render_triangle(Shape* s);
 // Draw rectangle
 
 // draw polygon
