@@ -10,6 +10,8 @@
 #include <freeglut.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "LinkedList.h"
 #include "Shape.h"
@@ -43,6 +45,7 @@ unsigned int frameStartTime = 0;
  // characters typed by the user to lowercase, so the SHIFT key is ignored.
 
 #define KEY_EXIT			27 // Escape key.
+#define KEY_R				114 
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -65,14 +68,30 @@ inline float rtoi(int rgb);
 /******************************************************************************
  * Animation-Specific Setup (Add your own definitions, constants, and globals here)
  ******************************************************************************/
-
+#define GROUND_ARRAY_SIZE 30
 // LINKED RENDERLIST
 LinkedList* rlistbg; // backgrounds
 LinkedList* rlistfg; // foregrounds
 
+// GROUND ARRAY
+float groundfarray[GROUND_ARRAY_SIZE];
+
 inline float rtoi(int rgb)
 {
 	return (float)rgb / 255.0;
+}
+
+void generate_ground()
+{
+	// generate GROUND_ARRAY_SIZE values between -0.5 and -0.3
+	for (int x = 0; x < GROUND_ARRAY_SIZE; x++)
+	{
+		float f = (float)rand() / (float)(RAND_MAX / 0.2f);
+		f -= 0.3f; // shift the range down
+		groundfarray[x] = f;
+	}
+
+	printf("Regenerated ground values\n");
 }
 
  /******************************************************************************
@@ -85,7 +104,7 @@ void main(int argc, char** argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(800, 800);
-	glutCreateWindow("Animation");
+	glutCreateWindow("Seducing the Unbelievably Adulterous Capture Target! I'll Defy the Female Lead, Even if I Have to Surrender to the Master?!");
 
 	// Set up the scene.
 	init();
@@ -133,11 +152,38 @@ void display(void)
 		case SHAPE_TRIANGLE:
 			render_triangle(current->shape_ptr);
 			break;
+		case SHAPE_CIRCLE:
+			render_circle(current->shape_ptr);
+			break;
 		case SHAPE_CUSTOM:
 			current->shape_ptr->custom(current->shape_ptr);
 			break;
 		}
 	}
+
+	render_ground(&groundfarray, GROUND_ARRAY_SIZE);
+	// hyucking do it again for the foreground list
+	for (Node* current = rlistfg->head; current != NULL; current = current->next)
+	{
+		// figure out what shape we're rendering
+		switch (current->shape_ptr->type)
+		{
+		case SHAPE_SQUARE:
+			render_square(current->shape_ptr);
+			break;
+		case SHAPE_TRIANGLE:
+			render_triangle(current->shape_ptr);
+			break;
+		case SHAPE_CIRCLE:
+			render_circle(current->shape_ptr);
+			break;
+		case SHAPE_CUSTOM:
+			current->shape_ptr->custom(current->shape_ptr);
+			break;
+		}
+	}
+	
+	// ground stands between the background elements and the foreground elements
 
 
 	glutSwapBuffers();
@@ -157,16 +203,15 @@ void keyPressed(unsigned char key, int x, int y)
 {
 	switch (tolower(key)) 
 	{
-		/*
-			TEMPLATE: Add any new character key controls here.
-
-			Rather than using literals (e.g. "d" for diagnostics), create a new KEY_
-			definition in the "Keyboard Input Handling Setup" section of this file.
-		*/
+	case KEY_R:
+		generate_ground();
+		break;
 	case KEY_EXIT:
 		exit(0);
 		break;
 	}
+
+	glutPostRedisplay();
 }
 
 /*
@@ -215,6 +260,7 @@ void init(void)
 	rlistbg = new_ll();
 	rlistfg = new_ll();
 
+	// TODO: split into helper functions
 
 	// initialize a single square the size of the screen with a custom function
 	Shape* sky = new_custom_shape("sky", render_sky);
@@ -222,11 +268,36 @@ void init(void)
 
 	// render some mountains for cool stone effect.
 	// Transparent background mountains first
-	Shape* mountains = new_shape("bgmountains", 3, -0.3f, -0.3f, 0.9f, 0,
+	Shape* mountain1 = new_shape("bgmountain1", 3, -0.3f, -0.3f, 0.9f, 0,
 		rtoi(145), rtoi(223), rtoi(255), 1.0f,
 		rtoi(112), rtoi(112), rtoi(112), 1.0f,
 		SHAPE_TRIANGLE);
-	insert_back(rlistbg, mountains);
+
+	Shape* mountain2 = new_shape("bgmountain2", 3, 0.6f, -0.3f, 0.7f, 0,
+		rtoi(145), rtoi(223), rtoi(255), 1.0f,
+		rtoi(180), rtoi(180), rtoi(180), 1.0f,
+		SHAPE_TRIANGLE);
+	insert_back(rlistbg, mountain2);
+	insert_back(rlistbg, mountain1);
+
+	// Chinese spy balloon
+	Shape* spyballoon = new_custom_shape("spyballoon", render_spy_balloon);
+	spyballoon->scale = 0.07f;
+	spyballoon->pos[1] = 0.8f;
+	insert_back(rlistbg, spyballoon);
+
+	// Do the random ground.
+	// Seed random
+	srand(time(0));
+	generate_ground();
+
+	// mr snowman
+	Shape* snowman_arse = new_shape("snowman_ass", 0, -0.4, -0.4, 0.4f, 0,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		0.7f, 0.7f, 0.7f, 1.0f,
+		SHAPE_CIRCLE);
+
+	insert_back(rlistfg, snowman_arse);
 }
 
 /*
@@ -239,8 +310,19 @@ void init(void)
 */
 void think(void)
 {
-	Shape* s = find(rlistbg, "bgmountains");
-	s->scale += 0.4f * FRAME_TIME_SEC;
+	// animate chinese spy balloon
+	Shape* sballoon = find(rlistbg, "spyballoon");
+	if (sballoon->pos[0] < -1.0f - sballoon->scale * 2)
+		sballoon->pos[0] = 1.0f + sballoon->scale;
+	else
+	{
+		sballoon->pos[0] -= 0.1f * FRAME_TIME_SEC;
+
+		float offset = 0.0002 * sin(0.001 * frameStartTime);
+		sballoon->pos[1] += offset;
+	}
+
+	glutPostRedisplay();
 }
 
 /******************************************************************************/

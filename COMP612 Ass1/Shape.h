@@ -41,6 +41,7 @@ Shape* new_custom_shape(const char* tag, void(*custom)(struct _shape* self));
 void render_square(Shape* s);
 
 // draw a perfect circle
+void render_circle(Shape* s);
 
 // DRAW PYRAMID
 void render_triangle(Shape* s);

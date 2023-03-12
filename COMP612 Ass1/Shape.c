@@ -120,3 +120,27 @@ void render_triangle(Shape* s)
 	glVertex2f(x + s->pos[0], y + s->pos[1]);
 	glEnd();
 }
+
+void render_circle(Shape* s)
+{
+	// colour 1 is inner, colour 2 is outer
+	// x = r cos t
+	// y = r sin t
+	float r = s->scale;
+
+	glBegin(GL_TRIANGLE_FAN);
+
+	glColor4fv(s->colour[0]);
+	glVertex2f(s->pos[0], s->pos[1]);
+
+	glColor4fv(s->colour[1]);
+	for (int i = 0; i < 720; i++)
+	{
+		float x = r * cos(rad(i));
+		float y = r * sin(rad(i));
+
+		glVertex2f(x + s->pos[0], y + s->pos[1]);
+	}
+
+	glEnd();
+}
