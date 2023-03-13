@@ -66,15 +66,14 @@ void render_spy_balloon(struct _shape* self)
 	// NOT WORKING: ASK FOR HELP
 
 	//// text that goes on top of the balloon
-	//const char* text = "WEATHER";
+	const char* text = "WEATHER";
 
-	////glScalef(2.0f, 2.0f, 1.0f);
+	//glScalef(2.0f, 2.0f, 1.0f);
 
-	//// position is the left end of the balloon
-	//glRasterPos2f(self->pos[0] - self->scale, self->pos[1] + self->scale);
-	//glutBitmapString(GLUT_BITMAP_HELVETICA_10, text);
+	// position is the left end of the balloon
 
-	////glScalef(1.0f, 1.0f, 1.0f);
+
+	//glScalef(1.0f, 1.0f, 1.0f);
 
 	// balloon
 	// the center of this shape parameter is the bottom of the balloon
@@ -140,4 +139,9 @@ void render_spy_balloon(struct _shape* self)
 	box.colour[0][3] = 1.0f;
 
 	render_square(&box);
+
+	// text
+	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+	glRasterPos2f(self->pos[0] - self->scale + 0.1f * self->scale, self->pos[1] + self->scale);
+	glutBitmapString(GLUT_BITMAP_HELVETICA_10, text);
 }

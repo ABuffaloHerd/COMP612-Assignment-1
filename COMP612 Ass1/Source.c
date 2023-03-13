@@ -318,7 +318,7 @@ void think(void)
 	{
 		sballoon->pos[0] -= 0.1f * FRAME_TIME_SEC;
 
-		float offset = 0.0002 * sin(0.001 * frameStartTime);
+		float offset = 0.02 * sin(0.001 * frameStartTime) * FRAME_TIME_SEC;
 		sballoon->pos[1] += offset;
 	}
 
