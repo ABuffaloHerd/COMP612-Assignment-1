@@ -16,6 +16,7 @@
 #include "LinkedList.h"
 #include "Shape.h"
 #include "RenderFunctions.h"
+#include "Particle.h"
 
  /******************************************************************************
   * Animation & Timing Setup
@@ -72,6 +73,8 @@ inline float rtoi(int rgb);
 // LINKED RENDERLIST
 LinkedList* rlistbg; // backgrounds
 LinkedList* rlistfg; // foregrounds
+
+ParticleSys* ps;
 
 // GROUND ARRAY
 float groundfarray[GROUND_ARRAY_SIZE];
@@ -182,9 +185,9 @@ void display(void)
 			break;
 		}
 	}
-	
-	// ground stands between the background elements and the foreground elements
 
+	// Particle system madness
+	render_particle_system(ps);
 
 	glutSwapBuffers();
 }
@@ -262,6 +265,9 @@ void init(void)
 
 	// TODO: split into helper functions
 
+	// setup particle system
+	ps = new_particle_system();
+
 	// initialize a single square the size of the screen with a custom function
 	Shape* sky = new_custom_shape("sky", render_sky);
 	insert_back(rlistbg, sky);
@@ -297,7 +303,7 @@ void init(void)
 		0.7f, 0.7f, 0.7f, 1.0f,
 		SHAPE_CIRCLE);
 
-	insert_back(rlistfg, snowman_arse);
+	//insert_back(rlistfg, snowman_arse);
 }
 
 /*
@@ -321,6 +327,8 @@ void think(void)
 		float offset = 0.02 * sin(0.001 * frameStartTime) * FRAME_TIME_SEC;
 		sballoon->pos[1] += offset;
 	}
+
+	update_particle_system(ps);
 
 	glutPostRedisplay();
 }

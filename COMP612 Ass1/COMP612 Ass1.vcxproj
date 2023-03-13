@@ -160,12 +160,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="LinkedList.c" />
+    <ClCompile Include="Particle.c" />
     <ClCompile Include="RenderFunctions.c" />
     <ClCompile Include="Shape.c" />
     <ClCompile Include="Source.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="RenderFunctions.h" />
     <ClInclude Include="Shape.h" />
   </ItemGroup>
