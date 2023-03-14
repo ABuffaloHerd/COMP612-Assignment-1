@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#define PARTICLE_INCREASE 2
+#define PARTICLE_DIFF 2
 
 extern const float FRAME_TIME_SEC;
 
@@ -86,7 +86,7 @@ void update_particle_system(ParticleSys* ps)
 
 	if (ps->active != ps->target)
 	{
-		activate(ps, PARTICLE_INCREASE);
+		activate(ps, PARTICLE_DIFF);
 	}
 
 	// update every particle

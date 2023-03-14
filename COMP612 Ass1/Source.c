@@ -47,6 +47,8 @@ unsigned int frameStartTime = 0;
 
 #define KEY_EXIT			27 // Escape key.
 #define KEY_R				114 
+#define KEY_X				120
+#define KEY_Z				122
 
 /******************************************************************************
  * GLUT Callback Prototypes
@@ -189,6 +191,11 @@ void display(void)
 	// Particle system madness
 	render_particle_system(ps);
 
+	// label
+	char particle[255];
+	sprintf_s(particle, 255, "Particles: %d", ps->active);
+	label(-1.0f, 0.9f, particle);
+
 	glutSwapBuffers();
 }
 
@@ -206,6 +213,12 @@ void keyPressed(unsigned char key, int x, int y)
 {
 	switch (tolower(key)) 
 	{
+	case KEY_X:
+		set_density(ps, 0);
+		break;
+	case KEY_Z:
+		set_density(ps, 1000);
+		break;
 	case KEY_R:
 		generate_ground();
 		break;
@@ -267,6 +280,7 @@ void init(void)
 
 	// setup particle system
 	ps = new_particle_system();
+	set_density(ps, MAX_PARTICLES);
 
 	// initialize a single square the size of the screen with a custom function
 	Shape* sky = new_custom_shape("sky", render_sky);

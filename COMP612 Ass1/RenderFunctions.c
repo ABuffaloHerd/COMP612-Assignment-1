@@ -145,3 +145,9 @@ void render_spy_balloon(struct _shape* self)
 	glRasterPos2f(self->pos[0] - self->scale + 0.1f * self->scale, self->pos[1] + self->scale);
 	glutBitmapString(GLUT_BITMAP_HELVETICA_10, text);
 }
+
+void label(float px, float py, char* text)
+{
+	glRasterPos2f(px, py);
+	glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_10, text);
+}

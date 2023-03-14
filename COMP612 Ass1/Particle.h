@@ -21,8 +21,11 @@ typedef struct _particlesys
 	Particle* particles[MAX_PARTICLES];
 
 	unsigned int active;
+	unsigned int target;
 } ParticleSys;
 
 ParticleSys* new_particle_system(void);
 void update_particle_system(ParticleSys*);
 void render_particle_system(ParticleSys*);
+
+void set_density(ParticleSys* ps, int target);
