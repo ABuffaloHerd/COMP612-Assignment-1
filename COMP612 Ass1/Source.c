@@ -297,8 +297,8 @@ void init(void)
 		rtoi(145), rtoi(223), rtoi(255), 1.0f,
 		rtoi(180), rtoi(180), rtoi(180), 1.0f,
 		SHAPE_TRIANGLE);
-	insert_back(rlistbg, mountain2);
-	insert_back(rlistbg, mountain1);
+	//insert_back(rlistbg, mountain2);
+	//insert_back(rlistbg, mountain1);
 
 	// Chinese spy balloon
 	Shape* spyballoon = new_custom_shape("spyballoon", render_spy_balloon);

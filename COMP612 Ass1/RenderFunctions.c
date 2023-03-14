@@ -31,6 +31,7 @@ void render_sky(struct _shape* self)
 	glEnd();
 }
 
+//TODO: SWITCH TO QUAD STRIPS
 void render_ground(float* f, int size)
 {
 	// calculate distance between each point
@@ -40,7 +41,7 @@ void render_ground(float* f, int size)
 
 	float colour[3] = { 116.0f / 255.0f, 116.0f / 255.0f, 116.0f / 255.0f };
 
-	glBegin(GL_POLYGON);
+	glBegin(GL_QUAD_STRIP);
 	// bottom left to right		
 	glColor3fv(colour);
 
