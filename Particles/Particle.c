@@ -20,6 +20,8 @@ ParticleSys* new_particle_system(void)
 		ps->particles[x] = new_particle();
 	}
 
+	//ps->particles[0]->active = 1;
+
 	return ps;
 }
 
@@ -58,13 +60,14 @@ void render_particle_system(ParticleSys* ps)
 		// Skip?
 		if (current->active == 0)
 		{
-			printf("Skipped particle\n");
+			//printf("Skipped particle\n");
 			continue;
 		}
 
 		// set stuff
 		glColor4fv(current->colour);
-		glPointSize(current->size);
+		//glPointSize(current->size);
+		glPointSize(20.0f);
 		
 		// Draw
 		glVertex2fv(current->pos);
@@ -78,12 +81,22 @@ void update_particle_system(ParticleSys* ps)
 	for (int x = 0; x < MAX_PARTICLES; x++)
 	{
 		Particle* current = ps->particles[x];
+
+		if (!current->active)
+			continue;
 		
 		current->pos[1] -= current->dy * FRAME_TIME_SEC;
 		current->lifetime++;
 
-		if (current->pos[x] < -1.2f)
-			current->pos[1] = 1.1f;
+#ifdef DEBUG
+		printf("Particle pos: %f, %f\n", current->pos[0], current->pos[1]);
+#endif
+		if (current->pos[1] <= -1.2f)
+		{
+			//printf("Particle reset\n");
+			free(ps->particles[x]);
+			ps->particles[x] = new_particle();
+		}
 		//printf("Particle information:\n");
 		//printf("pos: %f %f, size: %f\n", current->pos[0], current->pos[1], current->size);
 	}

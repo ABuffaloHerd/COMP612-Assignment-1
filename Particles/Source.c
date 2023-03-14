@@ -75,9 +75,16 @@ void main(int argc, char** argv)
 {
 	// Initialize the OpenGL window.
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(1000, 800);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowSize(1000, 1000);
 	glutCreateWindow("Animation");
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glOrtho(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 
 	// Set up the scene.
 	init();
