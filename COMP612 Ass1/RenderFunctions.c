@@ -36,20 +36,27 @@ void render_ground(float* f, int size)
 	// calculate distance between each point
 	float dx = 2.0f / (float)size;
 	float x = 1.0f;
+	float x2 = -1.0f;
 
 	float colour[3] = { 116.0f / 255.0f, 116.0f / 255.0f, 116.0f / 255.0f };
 
 	glBegin(GL_POLYGON);
-	// bottom left and right in that order
-	glColor3f(1.0f, 1.0f, 1.0f);
-	//glColor3fv(colour);
-	glVertex2f(-1.0f, -1.0f);
+	// bottom left to right		
+	glColor3fv(colour);
+
+	for (int i = 0; i < size; i++)
+	{
+		glVertex2f(x2, -1.0f);
+		x2 += dx;
+	}
+
 	glVertex2f(1.0f, -1.0f);
 
 	// starting at the top right, using quad mode
 	for (int i = 0; i < size; i++)
 	{	
 		// dirty pointer arithmetic.
+		glColor3f(1.0f, 1.0f, 1.0f);
 		float y = *(f + i);
 		glVertex2f(x, y);
 		x -= dx;
