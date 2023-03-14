@@ -5,7 +5,7 @@
  * This template provides a basic FPS-limited render loop for an animated scene.
  *
  ******************************************************************************/
-
+#define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
 #include <freeglut.h>
 #include <math.h>
@@ -131,6 +131,12 @@ void display(void)
 
 	render_particle_system(ps);
 
+	glRasterPos2f(-1.0f, 0.89f);
+
+	char debug[250];
+	sprintf(debug, "particles: %d", ps->active);
+	glutBitmapString(GLUT_BITMAP_HELVETICA_18, debug);
+
 	glutSwapBuffers();
 }
 
@@ -203,6 +209,7 @@ void init(void)
 {
 	srand(time(0));
 	ps = new_particle_system();
+	ps->target = 1000;
 }
 
 /*

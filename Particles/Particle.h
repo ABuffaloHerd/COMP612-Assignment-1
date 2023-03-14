@@ -21,6 +21,7 @@ typedef struct _particlesys
 	Particle* particles[MAX_PARTICLES];
 
 	unsigned int active;
+	unsigned int target;
 } ParticleSys;
 
 ParticleSys* new_particle_system(void);
