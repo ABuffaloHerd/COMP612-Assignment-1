@@ -71,7 +71,7 @@ inline float rtoi(int rgb);
 /******************************************************************************
  * Animation-Specific Setup (Add your own definitions, constants, and globals here)
  ******************************************************************************/
-#define GROUND_ARRAY_SIZE 30
+#define GROUND_ARRAY_SIZE 10
 // LINKED RENDERLIST
 LinkedList* rlistbg; // backgrounds
 LinkedList* rlistfg; // foregrounds

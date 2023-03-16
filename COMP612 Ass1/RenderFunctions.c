@@ -37,21 +37,11 @@ void render_ground(float* f, int size)
 	// calculate distance between each point
 	float dx = 2.0f / (float)size;
 	float x = 1.0f;
-	float x2 = -1.0f;
 
 	float colour[3] = { 116.0f / 255.0f, 116.0f / 255.0f, 116.0f / 255.0f };
 
-	glBegin(GL_QUAD_STRIP);
-	// bottom left to right		
-	glColor3fv(colour);
+	glBegin(GL_TRIANGLE_STRIP);
 
-	for (int i = 0; i < size; i++)
-	{
-		glVertex2f(x2, -1.0f);
-		x2 += dx;
-	}
-
-	glVertex2f(1.0f, -1.0f);
 
 	// starting at the top right, using quad mode
 	for (int i = 0; i < size; i++)
@@ -60,11 +50,17 @@ void render_ground(float* f, int size)
 		glColor3f(1.0f, 1.0f, 1.0f);
 		float y = *(f + i);
 		glVertex2f(x, y);
+
+		glColor3fv(colour);
+		glVertex2f(x, -1.0f);
 		x -= dx;
 	}
 
 	// last vertex for a smooth transition
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex2f(-1.0f, -0.3f);
+	glColor3fv(colour);
+	glVertex2f(-1.0f, -1.0f);
 
 	glEnd();
 }
