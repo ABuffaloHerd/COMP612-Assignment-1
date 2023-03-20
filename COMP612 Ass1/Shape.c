@@ -9,6 +9,17 @@ inline double rad(double deg)
 	return deg * (3.14159 / 180.0);
 }
 
+// filthy, dirty, disgusting pointer arithmetic
+void rtoiv(float* rgb, float* out)
+{
+	*out = *rgb / 255.0;
+	*(out + 1) = *(rgb + 1) / 255.0;
+	*(out + 2) = *(rgb + 2) / 255.0;
+	*(out + 3) = 1.0f;
+}
+// but the bounds of my genius find no limits here
+
+
 Shape* new_shape(char* tag, unsigned int corners,
 	float x, float y, float scale, float rotation,
 	float c1r, float c1g, float c1b, float c1a,
@@ -140,6 +151,32 @@ void render_circle(Shape* s)
 		float y = r * sin(rad(i));
 
 		glVertex2f(x + s->pos[0], y + s->pos[1]);
+	}
+
+	glEnd();
+}
+
+void render_poly(Shape* s)
+{
+	float r = s->scale;
+
+	glBegin(GL_TRIANGLE_FAN);
+
+	glColor4fv(s->colour[0]);
+	glVertex2f(s->pos[0], s->pos[1]);
+
+	glColor4fv(s->colour[1]);
+
+	float theta = s->rotation;
+
+	for (int i = 0; i < s->corners + 1; i++) // one more time to close the loop
+	{
+		float x = r * cos(rad(theta));
+		float y = r * sin(rad(theta));
+
+		glVertex2f(x + s->pos[0], y + s->pos[1]);
+
+		theta += 360.0f / s->corners;
 	}
 
 	glEnd();

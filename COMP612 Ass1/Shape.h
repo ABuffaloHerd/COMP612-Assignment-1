@@ -37,6 +37,14 @@ Shape* new_shape(char* tag, unsigned int corners,
 
 Shape* new_custom_shape(const char* tag, void(*custom)(struct _shape* self));
 
+// Utils
+// rgb transmogrifier 6900
+inline float rtoi(int rgb)
+{
+	return (float)rgb / 255.0;
+}
+
+void rtoiv(float* rgb, float* out);
 // Draw square
 void render_square(Shape* s);
 
@@ -48,3 +56,4 @@ void render_triangle(Shape* s);
 // Draw rectangle
 
 // draw polygon
+void render_poly(Shape* s);

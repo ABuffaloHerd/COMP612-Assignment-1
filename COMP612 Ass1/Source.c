@@ -81,11 +81,6 @@ ParticleSys* ps;
 // GROUND ARRAY
 float groundfarray[GROUND_ARRAY_SIZE];
 
-inline float rtoi(int rgb)
-{
-	return (float)rgb / 255.0;
-}
-
 void generate_ground()
 {
 	// generate GROUND_ARRAY_SIZE values between -0.5 and -0.3
@@ -160,6 +155,9 @@ void display(void)
 		case SHAPE_CIRCLE:
 			render_circle(current->shape_ptr);
 			break;
+		case SHAPE_POLY:
+			render_poly(current->shape_ptr);
+			break;
 		case SHAPE_CUSTOM:
 			current->shape_ptr->custom(current->shape_ptr);
 			break;
@@ -181,6 +179,9 @@ void display(void)
 			break;
 		case SHAPE_CIRCLE:
 			render_circle(current->shape_ptr);
+			break;
+		case SHAPE_POLY:
+			render_poly(current->shape_ptr);
 			break;
 		case SHAPE_CUSTOM:
 			current->shape_ptr->custom(current->shape_ptr);
@@ -302,7 +303,7 @@ void init(void)
 
 	// Chinese spy balloon
 	Shape* spyballoon = new_custom_shape("spyballoon", render_spy_balloon);
-	spyballoon->scale = 0.07f;
+	spyballoon->scale = 0.085f;
 	spyballoon->pos[1] = 0.8f;
 	insert_back(rlistbg, spyballoon);
 
@@ -312,12 +313,32 @@ void init(void)
 	generate_ground();
 
 	// mr snowman
-	Shape* snowman_arse = new_shape("snowman_ass", 0, -0.4, -0.4, 0.4f, 0,
+	Shape* snowman_arse = new_shape("snowman_ass", 0, -0.4, -0.4, 0.3f, 0,
 		1.0f, 1.0f, 1.0f, 1.0f,
 		0.7f, 0.7f, 0.7f, 1.0f,
 		SHAPE_CIRCLE);
 
-	//insert_back(rlistfg, snowman_arse);
+	insert_back(rlistfg, snowman_arse);
+
+	Shape* snowman_torso = new_shape("snowman_torso", 0, -0.4, -0.1, 0.25f, 0,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		0.7f, 0.7f, 0.7f, 1.0f,
+		SHAPE_CIRCLE);
+
+	insert_back(rlistfg, snowman_torso);
+
+	Shape* snowman_head = new_shape("snowman_head", 0, -0.4, 0.2f, 0.22f, 0,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		0.7f, 0.7f, 0.7f, 1.0f,
+		SHAPE_CIRCLE);
+
+	insert_back(rlistfg, snowman_head);
+
+	// face
+	Shape* face = new_custom_shape("face", render_snowman_face);
+	face->pos[0] = -0.4f;
+	face->pos[1] = 0.2f;
+	insert_back(rlistfg, face);
 }
 
 /*

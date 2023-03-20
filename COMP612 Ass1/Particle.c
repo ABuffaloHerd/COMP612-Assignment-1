@@ -114,7 +114,7 @@ void update_particle_system(ParticleSys* ps)
 void activate(ParticleSys* ps)
 {
 	int index = 0;
-	// find the first inactive particle and activate it. then move on count times and do the same
+	// find the first inactive particle and activate it.
 	while (ps->particles[index]->active)
 		index++;
 
@@ -122,7 +122,7 @@ void activate(ParticleSys* ps)
 	ps->active++;
 }
 
-void deactivate(ParticleSys* ps, int count)
+void deactivate(ParticleSys* ps)
 {
 	int index = 0;
 	// first active particle
@@ -133,7 +133,7 @@ void deactivate(ParticleSys* ps, int count)
 			index = MAX_PARTICLES;
 			break;
 		}
-		index++;
+		else index++;
 	}
 
 	ps->particles[index]->active = 0;
