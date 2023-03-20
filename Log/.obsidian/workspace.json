@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Week 2.md",
+                "file": "Week 3.md",
                 "mode": "source",
                 "source": false
               }
@@ -31,8 +31,7 @@
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -159,14 +158,14 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "78a3d872a57474bb",
+  "active": "b7cb69094f5a0865",
   "lastOpenFiles": [
+    "Week 2.md",
+    "Week 3.md",
     "attachments/Pasted image 20230313001648.png",
     "attachments/Pasted image 20230312235654.png",
     "attachments/Pasted image 20230312232104.png",
     "attachments/Pasted image 20230312231121.png",
-    "Week 2.md",
-    "Week 3.md",
     "Week 3",
     "attachments/Pasted image 20230311213726.png",
     "attachments/Pasted image 20230311213402.png",
@@ -174,7 +173,6 @@
     "attachments/Pasted image 20230311213134.png",
     "attachments/Animation.gif",
     "attachments/Pasted image 20230311212547.png",
-    "attachments/Pasted image 20230311212146.png",
     "attachments"
   ]
 }
