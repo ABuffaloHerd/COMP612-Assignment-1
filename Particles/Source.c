@@ -262,7 +262,7 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
-	update_particle_system(ps);
+	update_particle_snow(ps);
 }
 
 /******************************************************************************/

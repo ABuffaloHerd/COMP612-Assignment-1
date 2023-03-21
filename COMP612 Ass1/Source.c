@@ -363,7 +363,7 @@ void think(void)
 		sballoon->pos[1] += offset;
 	}
 
-	update_particle_system(ps);
+	update_particle_snow(ps);
 
 	glutPostRedisplay();
 }
