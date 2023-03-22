@@ -66,6 +66,7 @@ void think(void);
  ******************************************************************************/
 
 ParticleSys* ps;
+ParticleSys* snow;
 
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
@@ -130,12 +131,13 @@ void display(void)
 	*/
 
 	render_particle_system(ps);
+	render_particle_system(snow);
 
 	glRasterPos2f(-1.0f, 0.89f);
 
-	char debug[250];
-	sprintf(debug, "particles: %d", ps->active);
-	glutBitmapString(GLUT_BITMAP_HELVETICA_18, debug);
+	//char debug[250];
+	//sprintf(debug, "particles: %d", ps->active);
+	//glutBitmapString(GLUT_BITMAP_HELVETICA_18, debug);
 
 	glutSwapBuffers();
 }
@@ -161,7 +163,7 @@ void keyPressed(unsigned char key, int x, int y)
 			definition in the "Keyboard Input Handling Setup" section of this file.
 		*/
 	case KEY_R:
-		ps = new_particle_system();
+		activate_all(ps);
 		break;
 	case KEY_EXIT:
 		exit(0);
@@ -208,8 +210,13 @@ void idle(void)
 void init(void)
 {
 	srand(time(0));
-	ps = new_particle_system();
+	ps = new_particle_system(T_EXPLODE);
+	ps->center[0] = 0.0f;
+	ps->center[1] = 0.0f;
 	ps->target = 1000;
+
+	snow = new_particle_system(T_SNOW);
+	snow->target = 1000;
 }
 
 /*
@@ -262,7 +269,8 @@ void think(void)
 		brightness of lights, etc.
 	*/
 
-	update_particle_snow(ps);
+	update_particle_system(ps);
+	update_particle_system(snow);
 }
 
 /******************************************************************************/

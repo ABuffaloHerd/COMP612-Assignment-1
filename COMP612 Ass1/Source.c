@@ -48,6 +48,7 @@ unsigned int frameStartTime = 0;
 #define KEY_EXIT			27 // Escape key.
 #define KEY_R				114 
 #define KEY_X				120
+#define KEY_Y				121
 #define KEY_Z				122
 
 /******************************************************************************
@@ -77,6 +78,7 @@ LinkedList* rlistbg; // backgrounds
 LinkedList* rlistfg; // foregrounds
 
 ParticleSys* ps;
+ParticleSys* ps_explode;
 
 // GROUND ARRAY
 float groundfarray[GROUND_ARRAY_SIZE];
@@ -163,6 +165,8 @@ void display(void)
 			break;
 		}
 	}
+	// put explode behind ground
+	render_particle_system(ps_explode);
 
 	render_ground(&groundfarray, GROUND_ARRAY_SIZE);
 	// hyucking do it again for the foreground list
@@ -216,6 +220,9 @@ void keyPressed(unsigned char key, int x, int y)
 	{
 	case KEY_X:
 		set_density(ps, 0);
+		break;
+	case KEY_Y:
+		trigger(ps_explode);
 		break;
 	case KEY_Z:
 		set_density(ps, 1000);
@@ -280,8 +287,10 @@ void init(void)
 	// TODO: split into helper functions
 
 	// setup particle system
-	ps = new_particle_system();
+	ps = new_particle_system(T_SNOW);
 	set_density(ps, MAX_PARTICLES);
+
+	ps_explode = new_particle_system(T_EXPLODE);
 
 	// initialize a single square the size of the screen with a custom function
 	Shape* sky = new_custom_shape("sky", render_sky);
@@ -298,8 +307,8 @@ void init(void)
 		rtoi(145), rtoi(223), rtoi(255), 1.0f,
 		rtoi(180), rtoi(180), rtoi(180), 1.0f,
 		SHAPE_TRIANGLE);
-	//insert_back(rlistbg, mountain2);
-	//insert_back(rlistbg, mountain1);
+	insert_back(rlistbg, mountain2);
+	insert_back(rlistbg, mountain1);
 
 	// Chinese spy balloon
 	Shape* spyballoon = new_custom_shape("spyballoon", render_spy_balloon);
@@ -362,8 +371,14 @@ void think(void)
 		float offset = 0.02 * sin(0.001 * frameStartTime) * FRAME_TIME_SEC;
 		sballoon->pos[1] += offset;
 	}
+	// manually set the position of explode to balloon
+	ps_explode->center[0] = sballoon->pos[0];
+	ps_explode->center[1] = sballoon->pos[1];
 
-	update_particle_snow(ps);
+	update_particle_system(ps);
+	update_particle_system(ps_explode);
+
+	
 
 	glutPostRedisplay();
 }

@@ -12,27 +12,54 @@
 extern const float FRAME_TIME_SEC;
 
 Particle* new_particle_snow(void);
-void activate(ParticleSys* ps, int count);
-void deactivate(ParticleSys* ps, int count);
+void activate(ParticleSys* ps);
+void deactivate(ParticleSys* ps);
 void recycle_particle_snow(Particle* p);
+void recycle_particle_explode(Particle* p, float px, float py);
 
-ParticleSys* new_particle_system(void)
+void update_particle_system(ParticleSys* ps)
+{
+	if (ps->systype == T_SNOW)
+		update_particle_snow(ps);
+	else
+		update_particle_explode(ps);
+}
+
+
+ParticleSys* new_particle_system(SystemType t)
 {
 	ParticleSys* ps = (ParticleSys*)malloc(sizeof(ParticleSys));
 
 	ps->active = 0;
 
-	// insert particles
-	for (int x = 0; x < MAX_PARTICLES; x++)
-	{
-		ps->particles[x] = new_particle_snow();
-	}
-
-	//ps->particles[0]->active = 1;
 	ps->target = 0;
 	ps->center[0] = -1.0f;
 	ps->center[1] = -1.0f;
 
+	if (t == T_EXPLODE)
+	{
+		// insert particles
+		for (int x = 0; x < MAX_PARTICLES - 300; x++)
+		{
+			ps->particles[x] = new_particle_explode(ps->center[0], ps->center[1], DUST);
+		}
+
+		for (int x = MAX_PARTICLES - 300; x < MAX_PARTICLES; x++)
+		{
+			ps->particles[x] = new_particle_explode(ps->center[0], ps->center[1], SPARK);
+		}
+
+		ps->systype = T_EXPLODE;
+	}
+	else
+	{
+		for (int x = 0; x < MAX_PARTICLES; x++)
+		{
+			ps->particles[x] = new_particle_snow();
+		}
+
+		ps->systype = T_SNOW;
+	}
 	return ps;
 }
 
@@ -91,10 +118,10 @@ void update_particle_snow(ParticleSys* ps)
 
 	if (ps->active < ps->target)
 	{
-		activate(ps, PARTICLE_DIFF);
+		activate(ps);
 	}
 	else if (ps->active > ps->target)
-		deactivate(ps, PARTICLE_DIFF);
+		deactivate(ps);
 
 	// update every particle
 	for (int x = 0; x < MAX_PARTICLES; x++)
@@ -180,67 +207,117 @@ void recycle_particle_snow(Particle* p)
 
 void update_particle_explode(ParticleSys* ps)
 {
-	// update the particle system
-
-	if (ps->active < ps->target)
-	{
-		activate(ps, PARTICLE_DIFF);
-	}
-	else if (ps->active > ps->target)
-		deactivate(ps, PARTICLE_DIFF);
-
 	// update every particle
 	for (int x = 0; x < MAX_PARTICLES; x++)
 	{
 		Particle* current = ps->particles[x];
-		if (!current->active)
+		if (!current->active) // reset position if inactive
+		{
+			recycle_particle_explode(current, ps->center[0], ps->center[1]);
 			continue;
+		}
 
 		current->pos[0] += current->dx * FRAME_TIME_SEC;
-		current->pos[1] -= current->dy * FRAME_TIME_SEC;
+		current->pos[1] += current->dy * FRAME_TIME_SEC;
 		current->lifetime++;
+
+		current->dx += current->ddx;
+		current->dy += current->ddy;
 
 		if (current->pos[1] <= -1.2f)
 		{
-			//recycle_particle_snow(ps->particles[x]);
+			current->active = 0;
 		}
 		//printf("Particle information:\n");
 		//printf("pos: %f %f, size: %f\n", current->pos[0], current->pos[1], current->size);
 	}
 }
 
-Particle* new_particle_explode(ParticleSys* ps, unsigned int type)
+Particle* new_particle_explode(float px, float py, ParticleType type)
 {
 	Particle* p = (Particle*)malloc(sizeof(Particle));
 
 	// setup particle
 	p->active = 0;
-	p->pos[1] = 1.1f;
+	p->pos[0] = px;
+	p->pos[1] = py;
 
 	// dust or spark?
-	if (type & PARTICLE_TYPE_DUST)
+	if (type == DUST)
 	{
-		p->colour[0] = 0.9f;
-		p->colour[1] = 0.9f;
-		p->colour[2] = 0.9f;
+		p->colour[0] = 0.1f;
+		p->colour[1] = 0.1f;
+		p->colour[2] = 0.1f;
 		p->colour[3] = 1.0f;
+		p->size = (float)(rand() % 6 + 5);
+		p->dy = ((float)rand() / RAND_MAX) * 18.0f - 9.0f;
+		p->dx = ((float)rand() / RAND_MAX) * 18.0f - 9.0f;
+		p->ddx = 0.0f;
+		p->ddy = -0.3f;
+		p->mass = 1;
+		p->lifetime = 50;
+		p->type = DUST;
 	}
 	else
 	{
 		p->colour[0] = 0.980f;
-		p->colour[1] = 0.098f;
+		p->colour[1] = 0.908f;
 		p->colour[2] = 0.098f;
 		p->colour[3] = 1.0f;
+		p->size = (float)(rand() % 8 + 8);
+		p->dy = ((float)rand() / RAND_MAX) * 10.0f - 5.0f;
+		p->dx = ((float)rand() / RAND_MAX) * 10.0f - 5.0f;
+		p->ddx = 0.0f;
+		p->ddy = -0.5f;
+		p->mass = 1;
+		p->lifetime = 60;
+		p->type = SPARK;
 	}
 
-	// randomized values
-	p->pos[0] = (float)rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
-	p->dx = (float)rand() / ((float)RAND_MAX / 0.2f) - 1.0f;
-	p->mass = rand() % 11 + 1; // between 1 and 11
-
-	// based on mass, calculate a size and dY
-	p->size = (float)p->mass * 0.5f;
-	p->dy = p->mass * 0.1f;
-
 	return p;
+}
+
+void activate_all(ParticleSys* ps)
+{
+	for (int x = 0; x < MAX_PARTICLES; x++)
+	{
+		ps->particles[x]->active = 1;
+	}
+}
+
+void recycle_particle_explode(Particle* p, float px, float py)
+{
+	// ok we do it the hard way
+	p->active = 0;
+	p->pos[0] = px;
+	p->pos[1] = py;
+
+	if (p->type == DUST)
+	{
+		p->colour[0] = 0.1f;
+		p->colour[1] = 0.1f;
+		p->colour[2] = 0.1f;
+		p->colour[3] = 1.0f;
+		p->size = (float)(rand() % 6 + 5);
+		p->dy = ((float)rand() / RAND_MAX) * 18.0f - 9.0f;
+		p->dx = ((float)rand() / RAND_MAX) * 18.0f - 9.0f;
+		p->ddx = 0.0f;
+		p->ddy = -0.2f;
+		p->mass = 1;
+		p->lifetime = 50;
+	}
+	else
+	{
+		p->colour[0] = 0.980f;
+		p->colour[1] = 0.908f;
+		p->colour[2] = 0.098f;
+		p->colour[3] = 1.0f;
+		p->size = (float)(rand() % 8 + 8);
+		p->dy = ((float)rand() / RAND_MAX) * 10.0f - 5.0f;
+		p->dx = ((float)rand() / RAND_MAX) * 14.0f - 7.0f;
+		p->ddx = 0.0f;
+		p->ddy = -0.45f;
+		p->mass = 1;
+		p->lifetime = 60;
+	}
 }
