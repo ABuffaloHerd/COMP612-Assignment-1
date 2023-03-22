@@ -83,7 +83,7 @@ Particle* new_particle_snow(void)
 	// randomized values
 	p->pos[0] = (float)rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 	p->dx = (float)rand() / ((float)RAND_MAX / 0.2f) - 1.0f;
-	p->mass = rand() % 11; // between 0 and 11
+	p->mass = rand() % 11 + 1; // between 0 and 11
 
 	// based on mass, calculate a size and dY
 	p->size = (float)p->mass * 0.5f;
