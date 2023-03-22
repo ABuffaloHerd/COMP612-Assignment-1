@@ -10,7 +10,7 @@ typedef struct _node
 typedef struct _ll
 {
 	struct _node* head;
-	struct _node* tail; // only because this needs to be insertable at the ass end
+	struct _node* tail; // only because this needs to be insertable at the arse end
 
 	unsigned int size;
 } LinkedList;
