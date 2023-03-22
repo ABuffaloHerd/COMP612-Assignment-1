@@ -22,10 +22,12 @@ typedef struct _particlesys
 
 	unsigned int active;
 	unsigned int target;
+
+	float center[2];
 } ParticleSys;
 
 ParticleSys* new_particle_system(void);
-void update_particle_system(ParticleSys*);
+void update_particle_snow(ParticleSys*);
 void render_particle_system(ParticleSys*);
 
 void set_density(ParticleSys* ps, int target);

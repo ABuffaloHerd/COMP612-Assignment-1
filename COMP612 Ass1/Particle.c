@@ -8,10 +8,10 @@
 
 extern const float FRAME_TIME_SEC;
 
-Particle* new_particle(void);
+Particle* new_particle_snow(void);
 void activate(ParticleSys* ps, int count);
 void deactivate(ParticleSys* ps, int count);
-void recycle_particle(Particle* p);
+void recycle_particle_snow(Particle* p);
 
 ParticleSys* new_particle_system(void)
 {
@@ -22,16 +22,18 @@ ParticleSys* new_particle_system(void)
 	// insert particles
 	for (int x = 0; x < MAX_PARTICLES; x++)
 	{
-		ps->particles[x] = new_particle();
+		ps->particles[x] = new_particle_snow();
 	}
 
 	//ps->particles[0]->active = 1;
 	ps->target = 0;
+	ps->center[0] = -1.0f;
+	ps->center[1] = -1.0f;
 
 	return ps;
 }
 
-Particle* new_particle(void)
+Particle* new_particle_snow(void)
 {
 	Particle* p = (Particle*)malloc(sizeof(Particle));
 
@@ -47,7 +49,7 @@ Particle* new_particle(void)
 	// randomized values
 	p->pos[0] = (float)rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 	p->dx = (float)rand() / ((float)RAND_MAX / 0.2f) - 1.0f;
-	p->mass = rand() % 11; // between 0 and 11
+	p->mass = rand() % 11 + 1; // between 0 and 11
 
 	// based on mass, calculate a size and dY
 	p->size = (float)p->mass * 0.5f;
@@ -80,7 +82,7 @@ void render_particle_system(ParticleSys* ps)
 
 }
 
-void update_particle_system(ParticleSys* ps)
+void update_particle_snow(ParticleSys* ps)
 {
 	// update the particle system
 
@@ -103,7 +105,7 @@ void update_particle_system(ParticleSys* ps)
 
 		if (current->pos[1] <= -1.2f)
 		{
-			recycle_particle(ps->particles[x]);
+			recycle_particle_snow(ps->particles[x]);
 		}
 		//printf("Particle information:\n");
 		//printf("pos: %f %f, size: %f\n", current->pos[0], current->pos[1], current->size);
@@ -148,7 +150,7 @@ void set_density(ParticleSys* ps, int target)
 	
 }
 
-void recycle_particle(Particle* p)
+void recycle_particle_snow(Particle* p)
 {
 	// setup particle
 
@@ -162,9 +164,44 @@ void recycle_particle(Particle* p)
 	// randomized values
 	p->pos[0] = (float)rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 	p->dx = (float)rand() / ((float)RAND_MAX / 0.2f) - 1.0f;
-	p->mass = rand() % 11; // between 0 and 11
+	p->mass = rand() % 11 + 1; // between 0 and 10
 
 	// based on mass, calculate a size and dY
 	p->size = (float)p->mass * 0.5f;
 	p->dy = p->mass * 0.1f;
+}
+
+/**********************
+* EXPLOSION PARTICLES *
+***********************/
+
+void update_particle_explode(ParticleSys* ps)
+{
+	// update the particle system
+
+	if (ps->active < ps->target)
+	{
+		activate(ps, PARTICLE_DIFF);
+	}
+	else if (ps->active > ps->target)
+		deactivate(ps, PARTICLE_DIFF);
+
+	// update every particle
+	for (int x = 0; x < MAX_PARTICLES; x++)
+	{
+		Particle* current = ps->particles[x];
+		if (!current->active)
+			continue;
+
+		current->pos[0] += current->dx * FRAME_TIME_SEC;
+		current->pos[1] -= current->dy * FRAME_TIME_SEC;
+		current->lifetime++;
+
+		if (current->pos[1] <= -1.2f)
+		{
+			//recycle_particle_snow(ps->particles[x]);
+		}
+		//printf("Particle information:\n");
+		//printf("pos: %f %f, size: %f\n", current->pos[0], current->pos[1], current->size);
+	}
 }
