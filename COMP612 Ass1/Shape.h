@@ -26,6 +26,8 @@ typedef struct _shape
 	ShapeType type;
 
 	void(*custom)(struct _shape* self); // custom function for when none of the premade shapes are useful
+
+	unsigned int enabled;
 } Shape;
 
 // Shape Constr- I mean factory.

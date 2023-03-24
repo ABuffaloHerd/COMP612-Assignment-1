@@ -96,6 +96,24 @@ void generate_ground()
 	printf("Regenerated ground values\n");
 }
 
+void detonate()
+{
+	Shape* missile = find(rlistbg, "missile");
+	Shape* balloon = find(rlistbg, "spyballoon");
+	if (balloon->enabled)
+	{
+		missile->enabled = 1;
+		missile->pos[0] = -1.0f;
+		missile->pos[1] = balloon->pos[1];
+	}
+	else
+	{
+		balloon->pos[0] = 1.2f;
+		balloon->enabled = 1;
+		printf("Balloon enabled!\n");
+	}
+}
+
  /******************************************************************************
   * Entry Point (don't put anything except the main function here)
   ******************************************************************************/
@@ -145,6 +163,11 @@ void display(void)
 	// backgroundloop first
 	for (Node* current = rlistbg->head; current != NULL; current = current->next)
 	{
+		// render or na
+		if (!current->shape_ptr->enabled)
+		{
+			continue;
+		}
 		// figure out what shape we're rendering
 		switch (current->shape_ptr->type)
 		{
@@ -196,10 +219,14 @@ void display(void)
 	// Particle system madness
 	render_particle_system(ps);
 
-	// label
+	// labels
 	char particle[255];
 	sprintf_s(particle, 255, "Particles: %d", ps->active);
 	label(-1.0f, 0.9f, particle);
+
+	char info[255];
+	sprintf_s(info, 255, "Y: Destroy '''weather''' balloon / send a new one\nX: Disable snow\nZ: Enable snow");
+	label(-1.0f, 0.8f, info);
 
 	glutSwapBuffers();
 }
@@ -222,7 +249,7 @@ void keyPressed(unsigned char key, int x, int y)
 		set_density(ps, 0);
 		break;
 	case KEY_Y:
-		trigger(ps_explode);
+		detonate();
 		break;
 	case KEY_Z:
 		set_density(ps, 1000);
@@ -316,10 +343,12 @@ void init(void)
 	spyballoon->pos[1] = 0.8f;
 	insert_back(rlistbg, spyballoon);
 
-	// Do the random ground.
-	// Seed random
-	srand(time(0));
-	generate_ground();
+	// Missile
+	Shape* missile = new_custom_shape("missile", render_missile);
+	missile->enabled = 0;
+	missile->pos[0] = 10.0f;
+	missile->pos[1] = 10.0f;
+	insert_back(rlistbg, missile);
 
 	// mr snowman
 	Shape* snowman_arse = new_shape("snowman_ass", 0, -0.4, -0.4, 0.3f, 0,
@@ -348,6 +377,11 @@ void init(void)
 	face->pos[0] = -0.4f;
 	face->pos[1] = 0.2f;
 	insert_back(rlistfg, face);
+
+	// Do the random ground.
+	// Seed random
+	srand(time(0));
+	generate_ground();
 }
 
 /*
@@ -375,10 +409,23 @@ void think(void)
 	ps_explode->center[0] = sballoon->pos[0];
 	ps_explode->center[1] = sballoon->pos[1];
 
+	// do the missile
+	Shape* missile = find(rlistbg, "missile");
+	missile->pos[1] = sballoon->pos[1];
+	if (missile->enabled)
+	{
+		missile->pos[0] += 2.5f * FRAME_TIME_SEC;
+
+		if (missile->pos[0] > sballoon->pos[0])
+		{
+			trigger(ps_explode);
+			missile->enabled = 0;
+			sballoon->enabled = 0;
+		}
+	}
+
 	update_particle_system(ps);
 	update_particle_system(ps_explode);
-
-	
 
 	glutPostRedisplay();
 }

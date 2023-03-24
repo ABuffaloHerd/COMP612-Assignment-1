@@ -16,3 +16,7 @@ It explodes.
 ![](Animation2.gif)
 It's been about an hour since i made that gif.
 So at this point i've cobbled my spaghetti code together and now pressing Y causes the balloon to explode. However the balloon doesn't disappear yet.
+
+# 25/05/2023
+Fixed missile not rendering. Added label texts. 
+![](Pasted%20image%2020230325124927.png)

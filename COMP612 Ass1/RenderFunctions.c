@@ -205,3 +205,25 @@ void render_snowman_face(struct _shape* s)
 	a.pos[0] = s->pos[0] + 0.1f;
 	render_poly(&a);
 }
+
+void render_missile(struct _shape* s)
+{
+	s->colour[0][0] = 0.0f;
+	s->colour[0][1] = 0.0f;
+	s->colour[0][2] = 0.0f;
+	s->colour[0][3] = 1.0f;
+
+	s->colour[1][0] = 1.0f;
+	s->colour[1][1] = 1.0f;
+	s->colour[1][2] = 0.0f;
+	s->colour[1][3] = 1.0f;
+
+	// right to left
+	glLineWidth(4.0f);
+	glBegin(GL_LINES);
+	glColor4fv(s->colour[0]);
+	glVertex2f(s->pos[0], s->pos[1]);
+	glColor4fv(s->colour[1]);
+	glVertex2f(s->pos[0] - 0.2f, s->pos[1]);
+	glEnd();
+}

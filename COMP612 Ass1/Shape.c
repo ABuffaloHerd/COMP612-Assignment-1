@@ -56,6 +56,9 @@ Shape* new_shape(char* tag, unsigned int corners,
 	// this function must be explicitly set after creating a new shape
 	shape->custom = NULL;
 
+	// enabled by default
+	shape->enabled = 1;
+
 	return shape;
 }
 
