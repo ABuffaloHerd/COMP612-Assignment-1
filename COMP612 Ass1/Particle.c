@@ -73,7 +73,7 @@ Particle* new_particle_snow(void)
 
 	// setup particle
 	p->active = 0;
-	p->pos[1] = 1.1f;
+	p->pos[1] = 1.0f;
 
 	p->colour[0] = 1.0f;
 	p->colour[1] = 1.0f;
@@ -137,7 +137,7 @@ void update_particle_snow(ParticleSys* ps)
 		current->pos[1] -= current->dy * FRAME_TIME_SEC;
 		current->lifetime++;
 
-		if (current->pos[1] <= -1.2f)
+		if (current->pos[1] <= -1.0f)
 		{
 			recycle_particle_snow(ps->particles[x]);
 		}
@@ -204,8 +204,15 @@ void recycle_particle_snow(Particle* p)
 	p->mass = rand() % 11; // between 0 and 10
 
 	// based on mass, calculate a size and dY
-	p->size = (float)p->mass * 0.5f;
+	p->size = (float)p->mass * 0.7f;
 	p->dy = p->mass * 0.1f;
+
+	if (p->size < 0.1f)
+	{
+		// there was a printf here that said something rude when this condition was triggered
+		// that's because without this check the snow would disappear into sub visible sizes.
+		p->size = 0.1f;
+	}
 }
 
 /**********************
