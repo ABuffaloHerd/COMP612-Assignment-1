@@ -105,6 +105,7 @@ void detonate()
 		missile->enabled = 1;
 		missile->pos[0] = -1.0f;
 		missile->pos[1] = balloon->pos[1];
+		printf("This is AWACS SkyEye Fox 2!\n");
 	}
 	else
 	{

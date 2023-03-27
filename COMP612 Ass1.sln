@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinkedListTest", "LinkedLis
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Particles", "Particles\Particles.vcxproj", "{959E6F26-7631-4863-813C-AEDC58B89E39}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3DProject 1", "3DProject 1\3DProject 1.vcxproj", "{18DD93DD-412D-4F21-BD42-828877B4DF55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{959E6F26-7631-4863-813C-AEDC58B89E39}.Release|x64.Build.0 = Release|x64
 		{959E6F26-7631-4863-813C-AEDC58B89E39}.Release|x86.ActiveCfg = Release|Win32
 		{959E6F26-7631-4863-813C-AEDC58B89E39}.Release|x86.Build.0 = Release|Win32
+		{18DD93DD-412D-4F21-BD42-828877B4DF55}.Debug|x64.ActiveCfg = Debug|x64
+		{18DD93DD-412D-4F21-BD42-828877B4DF55}.Debug|x64.Build.0 = Debug|x64
+		{18DD93DD-412D-4F21-BD42-828877B4DF55}.Debug|x86.ActiveCfg = Debug|Win32
+		{18DD93DD-412D-4F21-BD42-828877B4DF55}.Debug|x86.Build.0 = Debug|Win32
+		{18DD93DD-412D-4F21-BD42-828877B4DF55}.Release|x64.ActiveCfg = Release|x64
+		{18DD93DD-412D-4F21-BD42-828877B4DF55}.Release|x64.Build.0 = Release|x64
+		{18DD93DD-412D-4F21-BD42-828877B4DF55}.Release|x86.ActiveCfg = Release|Win32
+		{18DD93DD-412D-4F21-BD42-828877B4DF55}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

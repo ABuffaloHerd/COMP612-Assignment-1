@@ -147,6 +147,7 @@ void update_particle_snow(ParticleSys* ps)
 
 }
 
+// activates one particle per call
 void activate(ParticleSys* ps)
 {
 	int index = 0;
@@ -158,6 +159,7 @@ void activate(ParticleSys* ps)
 	ps->active++;
 }
 
+// deactivates one particle per call
 void deactivate(ParticleSys* ps)
 {
 	int index = 0;
@@ -189,6 +191,7 @@ void recycle_particle_snow(Particle* p)
 	// setup particle
 
 	p->pos[1] = 1.1f;
+	p->active = 1;
 
 	p->colour[0] = 1.0f;
 	p->colour[1] = 1.0f;
@@ -281,6 +284,7 @@ Particle* new_particle_explode(float px, float py, ParticleType type)
 	return p;
 }
 
+// Activates all particles at once
 void trigger(ParticleSys* ps)
 {
 	for (int x = 0; x < MAX_PARTICLES; x++)
