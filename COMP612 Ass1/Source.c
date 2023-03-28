@@ -47,6 +47,7 @@ unsigned int frameStartTime = 0;
 
 #define KEY_EXIT			27 // Escape key.
 #define KEY_R				114 
+#define KEY_W				119
 #define KEY_X				120
 #define KEY_Y				121
 #define KEY_Z				122
@@ -79,6 +80,8 @@ LinkedList* rlistfg; // foregrounds
 
 ParticleSys* ps;
 ParticleSys* ps_explode;
+
+int scene;
 
 // GROUND ARRAY
 float groundfarray[GROUND_ARRAY_SIZE];
@@ -157,6 +160,13 @@ void main(int argc, char** argv)
 	 world. Animation (moving or rotating things, responding to keyboard input,
 	 etc.) should only be performed within the think() function provided below.
  */
+//void display2(void)
+//{
+//	glClear(GL_COLOR_BUFFER_BIT);
+//	render_ground(&groundfarray, GROUND_ARRAY_SIZE);
+//	glutSwapBuffers();
+//}
+
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -312,6 +322,9 @@ void init(void)
 	rlistbg = new_ll();
 	rlistfg = new_ll();
 
+	// scene test
+	int scene = 0;
+
 	// TODO: split into helper functions
 
 	// setup particle system
@@ -427,6 +440,12 @@ void think(void)
 
 	update_particle_system(ps);
 	update_particle_system(ps_explode);
+
+	// Good news! This crashes the program
+	//if (scene)
+	//{
+	//	glutDisplayFunc(display2);
+	//}
 
 	glutPostRedisplay();
 }
