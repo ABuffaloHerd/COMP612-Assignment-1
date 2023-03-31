@@ -48,6 +48,7 @@ unsigned int frameStartTime = 0;
 
 #define KEY_EXIT			27 // Escape key.
 #define KEY_R				114 
+#define KEY_V				118
 #define KEY_W				119
 #define KEY_X				120
 #define KEY_Y				121
@@ -75,6 +76,15 @@ inline float rtoi(int rgb);
  * Animation-Specific Setup (Add your own definitions, constants, and globals here)
  ******************************************************************************/
 #define GROUND_ARRAY_SIZE 10
+
+typedef struct _eq
+{
+	int shaking;
+	float mag;
+	unsigned int duration;
+	unsigned int timer;
+} EARTHQUAKE;
+
 // LINKED RENDERLIST
 LinkedList* rlistbg; // backgrounds
 LinkedList* rlistfg; // foregrounds
@@ -82,10 +92,18 @@ LinkedList* rlistfg; // foregrounds
 ParticleSys* ps;
 ParticleSys* ps_explode;
 
+// scene trackers
 int scene;
+EARTHQUAKE camshake;
 
 // GROUND ARRAY
 float groundfarray[GROUND_ARRAY_SIZE];
+
+void earfquak()
+{
+	camshake.shaking = 1;
+	camshake.duration = 60;
+}
 
 void generate_ground()
 {
@@ -173,6 +191,23 @@ void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	// are we having an earhquake?
+	if (camshake.shaking && camshake.timer < camshake.duration)
+	{
+		// calculate random offset values for camera position
+		float xOffset = (((float)rand() / (RAND_MAX)) - 0.5f) * camshake.mag;
+		float yOffset = (((float)rand() / (RAND_MAX)) - 0.5f) * camshake.mag;
+
+		glTranslatef(xOffset, yOffset, 0.0f);
+		camshake.timer++;
+	}
+	else
+	{
+		glLoadIdentity();
+		camshake.shaking = 0;
+		camshake.timer = 0;
+	}
+
 	// backgroundloop first
 	for (Node* current = rlistbg->head; current != NULL; current = current->next)
 	{
@@ -258,6 +293,9 @@ void keyPressed(unsigned char key, int x, int y)
 {
 	switch (tolower(key)) 
 	{
+	case KEY_V:
+		earfquak();
+		break;
 	case KEY_X:
 		set_density(ps, 0);
 		break;
@@ -336,8 +374,12 @@ void init(void)
 	rlistbg = new_ll();
 	rlistfg = new_ll();
 
-	// scene test
+	// scene info
 	int scene = 0;
+	camshake.duration = 0;
+	camshake.shaking = 0;
+	camshake.timer = 0;
+	camshake.mag = 0.2f;
 
 	// TODO: split into helper functions
 
