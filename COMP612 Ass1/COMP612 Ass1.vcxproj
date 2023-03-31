@@ -164,12 +164,14 @@
     <ClCompile Include="RenderFunctions.c" />
     <ClCompile Include="Shape.c" />
     <ClCompile Include="Source.c" />
+    <ClCompile Include="UpdateFunctions.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="RenderFunctions.h" />
     <ClInclude Include="Shape.h" />
+    <ClInclude Include="UpdateFunctions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

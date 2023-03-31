@@ -26,6 +26,7 @@ typedef struct _shape
 	ShapeType type;
 
 	void(*custom)(struct _shape* self); // custom function for when none of the premade shapes are useful
+	void(*update)(struct _shape* self); // update function to keep everything tidy
 
 	unsigned int enabled;
 } Shape;

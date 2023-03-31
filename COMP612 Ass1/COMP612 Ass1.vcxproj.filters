@@ -30,6 +30,9 @@
     <ClCompile Include="Particle.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UpdateFunctions.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LinkedList.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Particle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -213,6 +213,13 @@ void recycle_particle_snow(Particle* p)
 		// that's because without this check the snow would disappear into sub visible sizes.
 		p->size = 0.1f;
 	}
+
+	if (p->dy < 0.1f)
+	{
+		// there was a printf here that said something rude when this condition was tirggered
+		// that's because without this check the snow particles wouldn't move and therefore wouldn't appear
+		p->dy = 1.0f;
+	}
 }
 
 /**********************

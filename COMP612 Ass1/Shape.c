@@ -55,6 +55,7 @@ Shape* new_shape(char* tag, unsigned int corners,
 
 	// this function must be explicitly set after creating a new shape
 	shape->custom = NULL;
+	shape->update = NULL;
 
 	// enabled by default
 	shape->enabled = 1;
@@ -66,14 +67,14 @@ Shape* new_shape(char* tag, unsigned int corners,
 Shape* new_custom_shape(char* tag, void(*custom)(struct _shape* self))
 {
 	// initialize with default values
-		Shape* shape = new_shape(tag, 4, 0, 0, 1.0f, 0,
-		1.0f, 1.0f, 1.0f, 1.0f, // colour 1
-		1.0f, 1.0f, 1.0f, 1.0f, // colour 2
-		SHAPE_CUSTOM); // custom shape, so the custom function is in play here
+	Shape* shape = new_shape(tag, 4, 0, 0, 1.0f, 0,
+	1.0f, 1.0f, 1.0f, 1.0f, // colour 1
+	1.0f, 1.0f, 1.0f, 1.0f, // colour 2
+	SHAPE_CUSTOM); // custom shape, so the custom function is in play here
 
-		shape->custom = custom;
+	shape->custom = custom;
 
-		return shape;
+	return shape;
 }
 
 // GENERIC RENDER FUNCTIONS

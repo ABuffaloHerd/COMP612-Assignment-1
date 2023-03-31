@@ -17,6 +17,7 @@
 #include "Shape.h"
 #include "RenderFunctions.h"
 #include "Particle.h"
+#include "UpdateFunctions.h"
 
  /******************************************************************************
   * Animation & Timing Setup
@@ -160,12 +161,13 @@ void main(int argc, char** argv)
 	 world. Animation (moving or rotating things, responding to keyboard input,
 	 etc.) should only be performed within the think() function provided below.
  */
-//void display2(void)
-//{
-//	glClear(GL_COLOR_BUFFER_BIT);
-//	render_ground(&groundfarray, GROUND_ARRAY_SIZE);
-//	glutSwapBuffers();
-//}
+
+void armageddon(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glutSwapBuffers();
+}
 
 void display(void)
 {
@@ -268,6 +270,18 @@ void keyPressed(unsigned char key, int x, int y)
 	case KEY_R:
 		generate_ground();
 		break;
+	case KEY_W:
+		if (scene)
+		{
+			scene = 0;
+			glutDisplayFunc(display);
+		}
+		else
+		{
+			scene = 1;
+			glutDisplayFunc(armageddon);
+		}
+		break;
 	case KEY_EXIT:
 		exit(0);
 		break;
@@ -355,6 +369,7 @@ void init(void)
 	Shape* spyballoon = new_custom_shape("spyballoon", render_spy_balloon);
 	spyballoon->scale = 0.085f;
 	spyballoon->pos[1] = 0.8f;
+	spyballoon->update = update_spyballoon;
 	insert_back(rlistbg, spyballoon);
 
 	// Missile
@@ -362,6 +377,7 @@ void init(void)
 	missile->enabled = 0;
 	missile->pos[0] = 10.0f;
 	missile->pos[1] = 10.0f;
+	missile->update = update_missile;
 	insert_back(rlistbg, missile);
 
 	// mr snowman
@@ -408,44 +424,28 @@ void init(void)
 */
 void think(void)
 {
-	// animate chinese spy balloon
-	Shape* sballoon = find(rlistbg, "spyballoon");
-	if (sballoon->pos[0] < -1.0f - sballoon->scale * 2)
-		sballoon->pos[0] = 1.0f + sballoon->scale;
-	else
+	// update all
+	for (Node* current = rlistbg->head; current != NULL; current = current->next)
 	{
-		sballoon->pos[0] -= 0.1f * FRAME_TIME_SEC;
-
-		float offset = 0.02 * sin(0.001 * frameStartTime) * FRAME_TIME_SEC;
-		sballoon->pos[1] += offset;
+		Shape* shape = current->shape_ptr;
+		if (shape->update)
+			shape->update(shape);
 	}
-	// manually set the position of explode to balloon
+
+	for (Node* current = rlistfg->head; current != NULL; current = current->next)
+	{
+		Shape* shape = current->shape_ptr;
+		if (shape->update)
+			shape->update(shape);
+	}
+
+	// manually set explosion coords
+	Shape* sballoon = find(rlistbg, "spyballoon");
 	ps_explode->center[0] = sballoon->pos[0];
 	ps_explode->center[1] = sballoon->pos[1];
 
-	// do the missile
-	Shape* missile = find(rlistbg, "missile");
-	missile->pos[1] = sballoon->pos[1];
-	if (missile->enabled)
-	{
-		missile->pos[0] += 2.5f * FRAME_TIME_SEC;
-
-		if (missile->pos[0] > sballoon->pos[0])
-		{
-			trigger(ps_explode);
-			missile->enabled = 0;
-			sballoon->enabled = 0;
-		}
-	}
-
 	update_particle_system(ps);
 	update_particle_system(ps_explode);
-
-	// Good news! This crashes the program
-	//if (scene)
-	//{
-	//	glutDisplayFunc(display2);
-	//}
 
 	glutPostRedisplay();
 }
