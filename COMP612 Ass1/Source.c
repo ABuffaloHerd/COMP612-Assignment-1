@@ -77,12 +77,23 @@ inline float rtoi(int rgb);
  ******************************************************************************/
 #define GROUND_ARRAY_SIZE 10
 
+// self explanatory
+#define EARTHQUAKE_FUNNY 0.1f
+
+// max camera boundaries
+#define CAMERA_MIN_X -0.5f * EARTHQUAKE_FUNNY
+#define CAMERA_MIN_Y CAMERA_MIN_X
+#define CAMERA_MAX_X -1.0f * CAMERA_MIN_X
+#define CAMERA_MAX_Y CAMERA_MAX_X
+
+
+// the funny rating of the earthquake depends on the camera boundaries and the magnitude.
 typedef struct _eq
 {
-	int shaking;
-	float mag;
-	unsigned int duration;
-	unsigned int timer;
+	int shaking; // yes or no
+	float mag; // funny level
+	unsigned int duration; // in frames not seconds
+	unsigned int timer; // also in frames not seconds
 } EARTHQUAKE;
 
 // LINKED RENDERLIST
@@ -103,6 +114,45 @@ void earfquak()
 {
 	camshake.shaking = 1;
 	camshake.duration = 60;
+	glutSetWindowTitle("HA! APRIL FO-");
+}
+
+// note, earthquake timer doesn't update if the function is not called
+void camera_clamper()
+{
+	// keep track of these
+	static float camx = 0.0f;
+	static float camy = 0.0f;
+
+	// are we having an earhquake?
+	if (camshake.shaking && camshake.timer < camshake.duration)
+	{
+		// calculate random offset values for camera position
+		float xOffset = (((float)rand() / (RAND_MAX)) - 0.5f) * camshake.mag;
+		float yOffset = (((float)rand() / (RAND_MAX)) - 0.5f) * camshake.mag;
+
+		// funny randomness 
+		camx += camshake.timer % 2 == 0 ? xOffset : xOffset * -1.0f;
+		camy += camshake.timer % 3 == 0 ? yOffset : yOffset * -1.0f;
+
+		// clamp camera
+		camx = fmaxf(CAMERA_MIN_X, fminf(camx, CAMERA_MAX_X));
+		camy = fmaxf(CAMERA_MIN_Y, fminf(camy, CAMERA_MAX_Y));
+
+		glLoadIdentity();
+		glTranslatef(camx, camy, 0.0f);
+		camshake.timer++;
+	}
+	else
+	{
+		glLoadIdentity();
+		camshake.shaking = 0;
+		camshake.timer = 0;
+
+		camx = 0.0f;
+		camy = 0.0f;
+		glutSetWindowTitle("uooooh!!");
+	}
 }
 
 void generate_ground()
@@ -191,23 +241,7 @@ void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// are we having an earhquake?
-	if (camshake.shaking && camshake.timer < camshake.duration)
-	{
-		// calculate random offset values for camera position
-		float xOffset = (((float)rand() / (RAND_MAX)) - 0.5f) * camshake.mag;
-		float yOffset = (((float)rand() / (RAND_MAX)) - 0.5f) * camshake.mag;
-
-		glTranslatef(xOffset, yOffset, 0.0f);
-		camshake.timer++;
-	}
-	else
-	{
-		glLoadIdentity();
-		camshake.shaking = 0;
-		camshake.timer = 0;
-	}
-
+	camera_clamper();
 	// backgroundloop first
 	for (Node* current = rlistbg->head; current != NULL; current = current->next)
 	{
@@ -379,7 +413,7 @@ void init(void)
 	camshake.duration = 0;
 	camshake.shaking = 0;
 	camshake.timer = 0;
-	camshake.mag = 0.2f;
+	camshake.mag = EARTHQUAKE_FUNNY * 10.0f + 0.3f;
 
 	// TODO: split into helper functions
 
