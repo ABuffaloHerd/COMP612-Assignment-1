@@ -14,6 +14,8 @@ extern ParticleSys* ps_explode;
 extern EARTHQUAKE camshake;
 
 extern void earfquak(int);
+extern void generate_ground();
+extern void scene_switcher();
 
 void collapse_snowman();
 
@@ -82,7 +84,6 @@ void update_meteor(Shape* meteor)
 		Shape* ov = find(rlistfg, "overlay");
 		ov->enabled = 1;
 		ov->colour[0][3] = 0.0f;
-		collapse_snowman();
 	}
 
 	if (lifetime > 600)
@@ -91,12 +92,8 @@ void update_meteor(Shape* meteor)
 		lifetime = 0;
 		printf("Meteor expire\n");
 		find(rlistfg, "overlay")->enabled = 0;
+		scene_switcher();
 	}
 	else
 		lifetime++;
-}
-
-void collapse_snowman()
-{
-
 }

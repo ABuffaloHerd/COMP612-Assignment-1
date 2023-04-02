@@ -103,6 +103,8 @@ EARTHQUAKE camshake;
 // GROUND ARRAY
 float groundfarray[GROUND_ARRAY_SIZE];
 
+void armageddon(void);
+
 void earfquak(int duration)
 {
 	camshake.shaking = 1;
@@ -145,6 +147,20 @@ void camera_clamper()
 		camx = 0.0f;
 		camy = 0.0f;
 		glutSetWindowTitle("uooooh!!");
+	}
+}
+
+void scene_switcher()
+{
+	if (scene)
+	{
+		scene = 0;
+		glutDisplayFunc(display);
+	}
+	else
+	{
+		scene = 1;
+		glutDisplayFunc(armageddon);
 	}
 }
 
@@ -227,6 +243,17 @@ void armageddon(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	// so basically this place has no more mountains, and the sky is orange.
+	glColor4f(0.160f, 0.0907f, 0.00f, 1.0f);
+	glBegin(GL_QUADS);
+	glVertex2f(1.0f, 1.0f);
+	glVertex2f(-1.0f, 1.0f);
+	glColor4f(0.990f, 0.591f, 0.0693f, 1.0f);
+	glVertex2f(-1.0f, -1.0f);
+	glVertex2f(1.0f, -1.0f);
+	glEnd();
+	render_ground(&groundfarray, GROUND_ARRAY_SIZE);
+
 	glutSwapBuffers();
 }
 
@@ -271,6 +298,11 @@ void display(void)
 	for (Node* current = rlistfg->head; current != NULL; current = current->next)
 	{
 		// figure out what shape we're rendering
+		// render or na
+		if (!current->shape_ptr->enabled)
+		{
+			continue;
+		}
 		switch (current->shape_ptr->type)
 		{
 		case SHAPE_SQUARE:
@@ -300,7 +332,7 @@ void display(void)
 	label(-1.0f, 0.9f, particle);
 
 	char info[255];
-	sprintf_s(info, 255, "Y: Destroy '''weather''' balloon / send a new one\nX: Disable snow\nZ: Enable snow");
+	sprintf_s(info, 255, "Q: Meteor strike\nW: Toggle armageddon\nY: Destroy '''weather''' balloon / send a new one\nX: Disable snow\nZ: Enable snow");
 	label(-1.0f, 0.8f, info);
 
 	glutSwapBuffers();
@@ -311,6 +343,26 @@ void display(void)
 */
 void reshape(int width, int h)
 {
+	// set the viewport
+	glViewport(0, 0, width, h);
+	// set the orthographic projection
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (width <= h) 
+	{
+		glOrtho(-1.0, 1.0,
+			-1.0 * (GLfloat)h / (GLfloat)width, 1.0 * (GLfloat)h / (GLfloat)width,
+			-10.0, 10.0);
+	}
+	else 
+	{
+		glOrtho(-1.0 * (GLfloat)width / (GLfloat)h, 1.0 * (GLfloat)width / (GLfloat)h,
+			-1.0, 1.0,
+			-10.0, 10.0);
+	}
+	// return to model view mode
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 /*
@@ -339,16 +391,7 @@ void keyPressed(unsigned char key, int x, int y)
 		generate_ground();
 		break;
 	case KEY_W:
-		if (scene)
-		{
-			scene = 0;
-			glutDisplayFunc(display);
-		}
-		else
-		{
-			scene = 1;
-			glutDisplayFunc(armageddon);
-		}
+		scene_switcher();
 		break;
 	case KEY_EXIT:
 		exit(0);
