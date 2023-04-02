@@ -78,12 +78,12 @@ Particle* new_particle_snow(void)
 	p->colour[0] = 1.0f;
 	p->colour[1] = 1.0f;
 	p->colour[2] = 1.0f;
-	p->colour[3] = 1.0f;
 
 	// randomized values
 	p->pos[0] = (float)rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 	p->dx = (float)rand() / ((float)RAND_MAX / 0.2f) - 1.0f;
 	p->mass = rand() % 11 + 1; // between 0 and 11
+	p->colour[3] = ((float)rand() / (float)RAND_MAX) * 0.8f + 0.2f;
 
 	// based on mass, calculate a size and dY
 	p->size = (float)p->mass * 0.5f;
@@ -196,12 +196,12 @@ void recycle_particle_snow(Particle* p)
 	p->colour[0] = 1.0f;
 	p->colour[1] = 1.0f;
 	p->colour[2] = 1.0f;
-	p->colour[3] = 1.0f;
 
 	// randomized values
 	p->pos[0] = (float)rand() / ((float)RAND_MAX / 2.0f) - 1.0f;
 	p->dx = (float)rand() / ((float)RAND_MAX / 0.2f) - 1.0f;
 	p->mass = rand() % 11; // between 0 and 10
+	p->colour[3] = ((float)rand() / (float)RAND_MAX) * 0.8f + 0.2f;
 
 	// based on mass, calculate a size and dY
 	p->size = (float)p->mass * 0.7f;

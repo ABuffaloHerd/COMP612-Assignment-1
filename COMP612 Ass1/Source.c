@@ -18,6 +18,7 @@
 #include "RenderFunctions.h"
 #include "Particle.h"
 #include "UpdateFunctions.h"
+#include "Earthquake.h"
 
  /******************************************************************************
   * Animation & Timing Setup
@@ -47,6 +48,7 @@ unsigned int frameStartTime = 0;
  // characters typed by the user to lowercase, so the SHIFT key is ignored.
 
 #define KEY_EXIT			27 // Escape key.
+#define KEY_Q				113 
 #define KEY_R				114 
 #define KEY_V				118
 #define KEY_W				119
@@ -87,15 +89,6 @@ inline float rtoi(int rgb);
 #define CAMERA_MAX_Y CAMERA_MAX_X
 
 
-// the funny rating of the earthquake depends on the camera boundaries and the magnitude.
-typedef struct _eq
-{
-	int shaking; // yes or no
-	float mag; // funny level
-	unsigned int duration; // in frames not seconds
-	unsigned int timer; // also in frames not seconds
-} EARTHQUAKE;
-
 // LINKED RENDERLIST
 LinkedList* rlistbg; // backgrounds
 LinkedList* rlistfg; // foregrounds
@@ -110,10 +103,10 @@ EARTHQUAKE camshake;
 // GROUND ARRAY
 float groundfarray[GROUND_ARRAY_SIZE];
 
-void earfquak()
+void earfquak(int duration)
 {
 	camshake.shaking = 1;
-	camshake.duration = 60;
+	camshake.duration = duration;
 	glutSetWindowTitle("HA! APRIL FO-");
 }
 
@@ -327,8 +320,11 @@ void keyPressed(unsigned char key, int x, int y)
 {
 	switch (tolower(key)) 
 	{
+	case KEY_Q:
+		find(rlistbg, "meteor")->enabled = 1;
+		break;
 	case KEY_V:
-		earfquak();
+		earfquak(60);
 		break;
 	case KEY_X:
 		set_density(ps, 0);
@@ -441,6 +437,15 @@ void init(void)
 	insert_back(rlistbg, mountain2);
 	insert_back(rlistbg, mountain1);
 
+	// meteor
+	Shape* meteor = new_shape("meteor", 0, 10, 10, 0.1f, 0,
+		1.0f, 0.5f, 0.0f, 1.0f,
+		0.6f, 0.6f, 0.6f, 1.0f,
+		SHAPE_CIRCLE);
+	meteor->update = update_meteor;
+	meteor->enabled = 0;
+	insert_back(rlistbg, meteor);
+
 	// Chinese spy balloon
 	Shape* spyballoon = new_custom_shape("spyballoon", render_spy_balloon);
 	spyballoon->scale = 0.085f;
@@ -483,6 +488,13 @@ void init(void)
 	face->pos[0] = -0.4f;
 	face->pos[1] = 0.2f;
 	insert_back(rlistfg, face);
+
+	Shape* overlay = new_custom_shape("overlay", render_overlay);
+	overlay->colour[0][3] = 0.0f;
+	overlay->enabled = 0;
+	overlay->update = update_overlay;
+	insert_back(rlistfg, overlay);
+
 
 	// Do the random ground.
 	// Seed random

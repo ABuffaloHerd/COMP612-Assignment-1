@@ -227,3 +227,21 @@ void render_missile(struct _shape* s)
 	glVertex2f(s->pos[0] - 0.2f, s->pos[1]);
 	glEnd();
 }
+
+void render_overlay(struct _shape* overlay)
+{
+	// don't render unless enabled
+	if (!overlay->enabled)
+		return;
+	float colours[4] = { 1.0f, 1.0f, 1.0f, overlay->colour[0][3]};
+	glColor4fv(colours);
+
+	glBegin(GL_QUADS);
+	glVertex2f(1.0f, 1.0f);
+	glVertex2f(-1.0f, 1.0f);
+	glVertex2f(-1.0f, -1.0f);
+	glVertex2f(1.0f, -1.0f);
+	glEnd();
+
+	printf("overlay render\n");
+}

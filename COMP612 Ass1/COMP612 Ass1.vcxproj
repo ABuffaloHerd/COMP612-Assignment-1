@@ -167,6 +167,7 @@
     <ClCompile Include="UpdateFunctions.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Earthquake.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="RenderFunctions.h" />

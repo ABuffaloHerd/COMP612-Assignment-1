@@ -50,5 +50,8 @@
     <ClInclude Include="UpdateFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Earthquake.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
